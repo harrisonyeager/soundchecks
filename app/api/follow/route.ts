@@ -1,4 +1,4 @@
-import { auth, clerkClient } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/db/prisma'
 import { NextResponse } from 'next/server'
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       }
     })
     return NextResponse.json({ success: true, message: 'Followed successfully' })
-  } catch (error) {
+  } catch {
     // Already following
     return new Response('Already following', { status: 400 })
   }
