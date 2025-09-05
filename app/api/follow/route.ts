@@ -30,8 +30,7 @@ export async function POST(request: Request) {
         followingId: targetProfile.id
       }
     })
-    return NextResponse.json({ success: true, message: 'Followed 
-successfully' })
+    return NextResponse.json({ success: true, message: 'Followed successfully' })
   } catch (error) {
     // Already following
     return new Response('Already following', { status: 400 })
