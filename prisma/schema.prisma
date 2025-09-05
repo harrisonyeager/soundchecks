@@ -36,11 +36,16 @@
     rating    Float?
     notes     String?
     
+    // New field for normalized relationship
+    concertId String?
+    concert   Concert? @relation(fields: [concertId], references: [id], onDelete: SetNull)
+    
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     
     @@index([profileId])
     @@index([date])
+    @@index([concertId])
   }
 
   model Follow {
@@ -55,4 +60,57 @@
     @@unique([followerId, followingId])
     @@index([followerId])
     @@index([followingId])
+  }
+
+  // New normalized models for concerts
+
+  model Artist {
+    id        String   @id @default(cuid())
+    name      String
+    aliases   String[]
+    imageUrl  String?
+    
+    concerts  Concert[]
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    @@index([name])
+  }
+
+  model Venue {
+    id        String   @id @default(cuid())
+    name      String
+    aliases   String[]
+    city      String
+    country   String
+    latitude  Float?
+    longitude Float?
+    
+    concerts  Concert[]
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    @@index([name])
+    @@index([city])
+  }
+
+  model Concert {
+    id        String   @id @default(cuid())
+    artistId  String
+    artist    Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
+    venueId   String
+    venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+    date      DateTime
+    
+    concertLogs ConcertLog[]
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    @@unique([artistId, venueId, date])
+    @@index([artistId])
+    @@index([venueId])
+    @@index([date])
   }
