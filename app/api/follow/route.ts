@@ -61,6 +61,5 @@ export async function DELETE(request: Request) {
     }
   })
 
-  return NextResponse.json({ success: true, message: 'Unfollowed 
-successfully' })
+  return NextResponse.json({ success: true, message: 'Unfollowed successfully' })
 }
