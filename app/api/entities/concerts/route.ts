@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit
 
     // Build the search query
-    const whereClause: any = {}
+    const whereClause: Record<string, unknown> = {}
 
     // General search query (searches across artist, venue, and city)
     if (q && q.trim().length > 0) {

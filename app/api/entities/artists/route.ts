@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
  * @param query - Search query string
  * @returns Confidence score between 0 and 1
  */
-function calculateConfidence(frequency: number, position: number, _query?: string): number {
+function calculateConfidence(frequency: number, position: number): number {
   // Base confidence from frequency (logarithmic scale)
   let confidence = Math.min(0.3 + (Math.log(frequency + 1) / 10), 0.7)
   
