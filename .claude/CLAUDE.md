@@ -38,6 +38,16 @@ Using the test-runner agent ensures:
 - If the test fails, consider checking if the test is structured correctly before deciding we need to refactor the codebase.
 - Tests to be verbose so we can use them for debugging.
 
+### E2E Testing Strategy (Playwright)
+
+- **E2E ONLY** - No unit tests at this stage, focus on critical user paths
+- **Real Services** - Test against actual database, auth (Clerk), and APIs
+- **Selective Coverage** - Quality over quantity, test what matters most
+- **User Behavior Focus** - Test workflows, not implementation details
+- **No Test Generation** - Don't create new tests unless explicitly requested
+- **Test Command** - Use `npm run test:e2e` for all E2E tests
+- **Prerequisites** - Always ensure dev server is running on localhost:3000 before tests
+
 
 ## Tone and Behavior
 
@@ -63,3 +73,34 @@ Using the test-runner agent ensures:
 - NO OVER-ENGINEERING - Don't add unnecessary abstractions, factory patterns, or middleware when simple functions would work. Don't think "enterprise" when you need "working"
 - NO MIXED CONCERNS - Don't put validation logic inside API handlers, database queries inside UI components, etc. instead of proper separation
 - NO RESOURCE LEAKS - Don't forget to close database connections, clear timeouts, remove event listeners, or clean up file handles
+
+## Project-Specific Instructions
+
+### SoundChecks Application
+- **Stack**: Next.js 15, TypeScript, Prisma, Clerk Auth, TanStack Query
+- **Database**: PostgreSQL with Prisma ORM
+- **API Pattern**: Next.js App Router API routes with Zod validation
+- **Auth**: Clerk for authentication, user context required for all data operations
+- **Testing**: E2E only with Playwright, no unit tests at this stage
+
+### Code Patterns
+- Use App Router conventions for all routes
+- Implement server components by default, client components only when needed
+- Use Prisma for all database operations
+- Validate API inputs with Zod schemas
+- Handle errors gracefully with appropriate HTTP status codes
+
+## Testing Commands
+
+- Run E2E tests: `npm run test:e2e`
+- Run dev server: `npm run dev`
+- Run linting: `npm run lint`
+- Run build: `npm run build`
+
+## Important Notes
+
+- Always check existing code patterns before implementing new features
+- Reuse existing utilities and components
+- Follow the established project structure
+- Ensure Clerk authentication is properly integrated
+- Test against real services, never use mocks
