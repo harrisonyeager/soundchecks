@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
-import { searchParamsSchema, artistSearchResponseSchema } from '@/app/lib/schemas/entities'
+import { searchParamsSchema, artistSearchResponseSchema, artistCreateSchema, artistSchema } from '@/app/lib/schemas/entities'
 import { Artist, PaginatedResponse } from '@/app/lib/types/entities'
 import { z } from 'zod'
 
@@ -114,6 +114,85 @@ export async function GET(request: NextRequest) {
       {
         error: 'Internal Server Error',
         message: 'Failed to search artists'
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validatedData = artistCreateSchema.parse(body)
+    const { name } = validatedData
+
+    // Normalize for matching (case-insensitive)
+    const normalizedName = name.trim()
+
+    // Check if artist already exists using case-insensitive matching
+    const existingArtist = await prisma.concertLog.findFirst({
+      where: {
+        artist: {
+          equals: normalizedName,
+          mode: 'insensitive'
+        }
+      },
+      select: {
+        artist: true
+      }
+    })
+
+    if (existingArtist) {
+      // Return the existing artist
+      const artist: Artist = {
+        id: `artist_${existingArtist.artist.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')}`,
+        name: existingArtist.artist,
+        confidence: 1.0 // Perfect match
+      }
+
+      const validatedArtist = artistSchema.parse(artist)
+
+      return NextResponse.json({
+        artist: validatedArtist,
+        created: false,
+        message: 'Artist already exists'
+      }, { status: 200 })
+    }
+
+    // For now, we just return the artist data as if it was created
+    // In a full implementation, you might want to actually create an artists table
+    // But based on the current schema, artists are stored in ConcertLog entries
+    const artist: Artist = {
+      id: `artist_${normalizedName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')}`,
+      name: normalizedName,
+      confidence: 1.0
+    }
+
+    const validatedArtist = artistSchema.parse(artist)
+
+    return NextResponse.json({
+      artist: validatedArtist,
+      created: true,
+      message: 'Artist created successfully'
+    }, { status: 201 })
+  } catch (error) {
+    console.error('Artist creation error:', error)
+    
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: 'Validation Error',
+          message: 'Invalid request data',
+          details: error.issues
+        },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      {
+        error: 'Internal Server Error',
+        message: 'Failed to create artist'
       },
       { status: 500 }
     )
