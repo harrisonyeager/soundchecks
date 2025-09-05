@@ -46,7 +46,7 @@ export const concertCreateSchema = z.object({
   artistName: z.string().min(1).max(255),
   venueName: z.string().min(1).max(255),
   venueCity: z.string().min(1).max(255),
-  date: z.date()
+  date: z.string().datetime().transform((str) => new Date(str))
 })
 
 // Pagination schema
