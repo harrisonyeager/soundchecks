@@ -29,7 +29,9 @@ author: Claude Code PM System
 - ✅ Concert logging functionality
 - ✅ Follow/unfollow social features
 - ✅ Database schema with Prisma
+- ✅ **Normalized database models (Artist, Venue, Concert)** - Issue #13 completed
 - ✅ API routes for concerts and follows
+- ✅ API routes for entities (artists, venues, concerts)
 - ✅ Profile pages with dynamic routing
 - ✅ TypeScript configuration
 - ✅ ESLint setup

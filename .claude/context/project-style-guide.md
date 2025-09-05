@@ -24,10 +24,14 @@ author: Claude Code PM System
 // ✅ Good: Explicit types
 interface ConcertLog {
   id: string;
-  artist: string;
-  venue: string;
+  artist: string;        // Denormalized for backward compatibility
+  venue: string;         // Denormalized for backward compatibility
+  city: string;
   date: Date;
   rating?: number;
+  notes?: string;
+  concertId?: string;    // Optional link to normalized Concert
+  profileId: string;
 }
 
 // ❌ Bad: Using 'any'
@@ -357,14 +361,17 @@ Types: feat, fix, refactor, docs, test, chore, style
 #### Input Validation
 ```typescript
 // Always validate input
-const schema = z.object({
+const concertLogSchema = z.object({
   artist: z.string().min(1).max(100),
   venue: z.string().min(1).max(100),
+  city: z.string().min(1).max(100),
   date: z.string().datetime(),
   rating: z.number().min(1).max(5).optional(),
+  notes: z.string().max(500).optional(),
+  concertId: z.string().optional(), // Link to normalized Concert
 });
 
-const validated = schema.parse(input);
+const validated = concertLogSchema.parse(input);
 ```
 
 #### Authentication Checks

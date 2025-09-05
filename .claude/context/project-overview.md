@@ -154,7 +154,10 @@ SoundChecks is a web-based social platform for logging, sharing, and discovering
 ### Data Model
 - **Users** (via Clerk + Profile)
 - **Profiles** (username, bio, stats)
-- **ConcertLogs** (event details)
+- **Artists** (name, aliases, imageUrl) - *NEW*
+- **Venues** (name, aliases, location, coordinates) - *NEW*
+- **Concerts** (normalized events with artist/venue relations) - *NEW*
+- **ConcertLogs** (user's concert experiences, optionally linked to Concert)
 - **Follows** (social relationships)
 
 ### Security Model
