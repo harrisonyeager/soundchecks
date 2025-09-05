@@ -2,13 +2,14 @@ import { prisma } from '@/lib/db/prisma'
 import { notFound } from 'next/navigation'
 import { auth } from '@clerk/nextjs/server'
 import { FollowButton } from '@/components/follow-button'
+import type { ConcertLog } from '@prisma/client'
 
 export default async function ProfilePage({
   params
 }: {
   params: Promise<{ username: string }>
 }) {
-  const { username } = await params  // params is now a Promise
+  const { username } = await params
   const { userId } = await auth()
 
   const profile = await prisma.profile.findUnique({
@@ -90,7 +91,7 @@ export default async function ProfilePage({
         {profile.logs.length === 0 ? (
           <p className="text-gray-500">No concerts logged yet</p>
         ) : (
-          profile.logs.map((log) => (
+          profile.logs.map((log: ConcertLog) => (
             <div key={log.id} className="border rounded-lg p-4">
               <h3 className="font-semibold">{log.artist}</h3>
               <p className="text-gray-600">
