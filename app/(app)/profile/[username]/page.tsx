@@ -6,12 +6,13 @@ import { FollowButton } from '@/components/follow-button'
 export default async function ProfilePage({
   params
 }: {
-  params: { username: string }
+  params: Promise<{ username: string }>
 }) {
+  const { username } = await params  // params is now a Promise
   const { userId } = await auth()
 
   const profile = await prisma.profile.findUnique({
-    where: { username: params.username },
+    where: { username },
     include: {
       logs: {
         orderBy: { date: 'desc' },
@@ -63,28 +64,23 @@ export default async function ProfilePage({
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold">{profile.username}</h1>
-            {profile.bio && <p className="text-gray-600 
-mt-2">{profile.bio}</p>}
+            {profile.bio && <p className="text-gray-600 mt-2">{profile.bio}</p>}
 
             <div className="flex gap-6 mt-4 text-sm">
               <div>
-                <span 
-className="font-semibold">{profile._count.logs}</span> concerts
+                <span className="font-semibold">{profile._count.logs}</span> concerts
               </div>
               <div>
-                <span 
-className="font-semibold">{profile._count.followers}</span> followers
+                <span className="font-semibold">{profile._count.followers}</span> followers
               </div>
               <div>
-                <span 
-className="font-semibold">{profile._count.following}</span> following
+                <span className="font-semibold">{profile._count.following}</span> following
               </div>
             </div>
           </div>
 
           {!isOwnProfile && userId && (
-            <FollowButton username={params.username} 
-initialFollowing={isFollowing} />
+            <FollowButton username={username} initialFollowing={isFollowing} />
           )}
         </div>
       </div>
@@ -98,13 +94,10 @@ initialFollowing={isFollowing} />
             <div key={log.id} className="border rounded-lg p-4">
               <h3 className="font-semibold">{log.artist}</h3>
               <p className="text-gray-600">
-                {log.venue} • {log.city} • {new
-Date(log.date).toLocaleDateString()}
+                {log.venue} • {log.city} • {new Date(log.date).toLocaleDateString()}
               </p>
-              {log.rating &&
-<p>{'⭐'.repeat(Math.floor(log.rating))}</p>}
-              {log.notes && <p className="mt-2 
-text-gray-700">{log.notes}</p>}
+              {log.rating && <p>{'⭐'.repeat(Math.floor(log.rating))}</p>}
+              {log.notes && <p className="mt-2 text-gray-700">{log.notes}</p>}
             </div>
           ))
         )}
