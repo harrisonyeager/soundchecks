@@ -54,34 +54,76 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit
 
     // Build the search query
-    const whereClause: Record<string, unknown> = {}
+    // Using a flexible type for Prisma where clause
+    type StringFilter = {
+      contains?: string
+      startsWith?: string
+      mode?: 'insensitive'
+    }
+    
+    const whereClause: {
+      date?: {
+        gte?: Date
+        lt?: Date
+      }
+      OR?: Array<{
+        artist?: StringFilter
+        venue?: StringFilter
+        city?: StringFilter
+      }>
+      artist?: StringFilter
+      venue?: StringFilter
+      city?: StringFilter
+    } = {}
 
     // General search query (searches across artist, venue, and city)
     if (q && q.trim().length > 0) {
       const searchTerm = q.trim()
       const searchMode = autocomplete ? 'insensitive' as const : 'insensitive' as const
-      const searchType = autocomplete ? 'startsWith' : 'contains'
       
-      whereClause.OR = [
-        {
-          artist: {
-            [searchType]: searchTerm,
-            mode: searchMode
+      if (autocomplete) {
+        whereClause.OR = [
+          {
+            artist: {
+              startsWith: searchTerm,
+              mode: searchMode
+            }
+          },
+          {
+            venue: {
+              startsWith: searchTerm,
+              mode: searchMode
+            }
+          },
+          {
+            city: {
+              startsWith: searchTerm,
+              mode: searchMode
+            }
           }
-        },
-        {
-          venue: {
-            [searchType]: searchTerm,
-            mode: searchMode
+        ]
+      } else {
+        whereClause.OR = [
+          {
+            artist: {
+              contains: searchTerm,
+              mode: searchMode
+            }
+          },
+          {
+            venue: {
+              contains: searchTerm,
+              mode: searchMode
+            }
+          },
+          {
+            city: {
+              contains: searchTerm,
+              mode: searchMode
+            }
           }
-        },
-        {
-          city: {
-            [searchType]: searchTerm,
-            mode: searchMode
-          }
-        }
-      ]
+        ]
+      }
     }
 
     // Specific field filters
@@ -120,17 +162,19 @@ export async function GET(request: NextRequest) {
     } else {
       // Date range filtering
       if (dateFrom || dateTo) {
-        whereClause.date = {}
+        const dateFilter: { gte?: Date; lt?: Date } = {}
         
         if (dateFrom) {
-          whereClause.date.gte = new Date(dateFrom)
+          dateFilter.gte = new Date(dateFrom)
         }
         
         if (dateTo) {
           const toDate = new Date(dateTo)
           toDate.setDate(toDate.getDate() + 1) // Include the entire end date
-          whereClause.date.lt = toDate
+          dateFilter.lt = toDate
         }
+        
+        whereClause.date = dateFilter
       }
     }
 

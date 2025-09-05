@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
       name: item.venue,
       city: item.city,
       // Simple confidence scoring based on frequency and position
-      confidence: calculateConfidence(item._count._all, index, q)
+      confidence: calculateConfidence(item._count._all, index)
     }))
 
     // Calculate pagination metadata

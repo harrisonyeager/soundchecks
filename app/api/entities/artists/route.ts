@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       id: `artist_${item.artist.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')}`,
       name: item.artist,
       // Simple confidence scoring based on frequency and position
-      confidence: calculateConfidence(item._count._all, index, q)
+      confidence: calculateConfidence(item._count._all, index)
     }))
 
     // Calculate pagination metadata
