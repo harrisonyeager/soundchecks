@@ -89,6 +89,7 @@ Using the test-runner agent ensures:
 - Use Prisma for all database operations
 - Validate API inputs with Zod schemas
 - Handle errors gracefully with appropriate HTTP status codes
+- **NEVER use `any` type** - use `unknown`, `Record<string, unknown>`, union types, or custom types instead
 
 ## Testing Commands
 

@@ -51,7 +51,12 @@ author: Claude Code PM System
 
 ### Code Quality
 - **TypeScript**: Static type checking
+  - Strict mode enabled (`strict: true` in tsconfig.json)
+  - No implicit any (`noImplicitAny: true`)
+  - Strict null checks enabled
 - **ESLint**: v9 with Next.js config
+  - **@typescript-eslint/no-explicit-any**: Enforced to prevent `any` usage
+  - **@typescript-eslint/no-unused-vars**: Warns on unused variables
 - **@eslint/eslintrc**: v3
 
 ### Testing

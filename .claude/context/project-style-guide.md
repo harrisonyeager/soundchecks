@@ -34,6 +34,31 @@ interface ConcertLog {
 const processConcert = (data: any) => { ... }
 ```
 
+#### Avoiding 'any' Type
+**NEVER use `any` type** - it defeats TypeScript's purpose. Use these alternatives:
+
+```typescript
+// ❌ Bad: Using 'any'
+const data: any = fetchSomeData();
+function process(input: any) { }
+
+// ✅ Good: Type-safe alternatives
+const data: unknown = fetchSomeData();           // For truly unknown types
+const obj: object = {};                          // For objects
+const value: string | number = getValue();       // Union types
+const kvPairs: Record<string, unknown> = {};     // For key-value objects
+type MyType = { name: string; age: number };     // Custom types
+
+// For Prisma where clauses or dynamic objects
+type StringFilter = {
+  contains?: string;
+  startsWith?: string;
+  mode?: 'insensitive';
+}
+```
+
+**ESLint Configuration**: The project enforces `@typescript-eslint/no-explicit-any` rule to prevent any usage.
+
 #### Type Exports
 - Export types/interfaces from the file where they're defined
 - Co-locate types with their primary usage
