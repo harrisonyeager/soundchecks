@@ -101,11 +101,22 @@ export class LRUCache<T> {
    * @param ttl Optional TTL in milliseconds (overrides default)
    */
   public set(key: string, value: T, ttl?: number): void {
+    // Don't store anything if maxSize is 0
+    if (this.config.maxSize <= 0) {
+      return
+    }
+
     this.lock.add(key)
 
     try {
       const now = Date.now()
       const effectiveTTL = ttl ?? this.config.defaultTTL
+      
+      // Handle negative TTL as immediate expiration
+      if (effectiveTTL < 0) {
+        return // Don't store items with negative TTL
+      }
+      
       const expiresAt = effectiveTTL > 0 ? now + effectiveTTL : null
 
       const entry: CacheEntry<T> = {

@@ -110,6 +110,16 @@ export class AliasResolver {
    * Resolve a single alias with confidence scoring
    */
   resolve(input: string, category?: 'artist' | 'venue' | 'city'): AliasResolutionResult {
+    if (!input) {
+      return {
+        input: input || '',
+        canonical: null,
+        confidence: 0,
+        resolutionType: 'none',
+        suggestions: []
+      }
+    }
+    
     const normalizedInput = normalizeForMatching(input)
     
     // Check custom aliases first

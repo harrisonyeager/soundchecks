@@ -154,6 +154,8 @@ export function removeArticles(text: string): string {
  * Convert unicode characters to ASCII equivalents
  */
 export function convertUnicode(text: string): string {
+  if (!text) return text || ''
+  
   let result = text
   
   for (const [unicode, ascii] of Object.entries(UNICODE_MAP)) {
@@ -167,6 +169,8 @@ export function convertUnicode(text: string): string {
  * Main text normalization function
  */
 export function normalizeText(text: string, config: Partial<NormalizationConfig> = {}): string {
+  if (!text) return text || ''
+  
   const fullConfig = { ...DEFAULT_NORMALIZATION_CONFIG, ...config }
   let normalized = text
   
